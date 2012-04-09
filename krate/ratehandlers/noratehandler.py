@@ -2,9 +2,9 @@ from .ratehandlerbase import RateHandlerBase
 
 class NoRateHandler(RateHandlerBase):
     def rate_object(self, request, obj, rate, **kwargs):
-        return None
+        return ('created', 0)
 
-    def get_object_rate(self, request, obj, **kwargs):
+    def get_object_rate(self, obj, **kwargs):
         return 0
 
     def get_request_object_rate(self, user, obj, **kwargs):

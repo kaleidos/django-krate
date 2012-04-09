@@ -19,28 +19,31 @@ class DBRateHandler(RateHandlerBase):
                 if isinstance(obj, KRateableMixin):
                     obj.krate = rate
                     obj.save()
+                return ('created', rate)
             elif not created_agg and created:
                 obj_rate.krate = rate
                 obj_rate.save()
                 obj_rate_aggregate.count += 1
                 obj_rate_aggregate.summatory += rate
-                obj_rate_aggregate.avg += obj_rate_aggregate.rate / obj_rate_aggregate.count
+                obj_rate_aggregate.avg = obj_rate_aggregate.summatory / obj_rate_aggregate.count
                 obj_rate_aggregate.save()
                 if isinstance(obj, KRateableMixin):
                     obj.krate = obj_rate_aggregate.avg
                     obj.save()
+                return ('created', obj_rate_aggregate.avg)
             elif not created_agg and not created:
                 obj_rate_aggregate.summatory -= obj_rate.krate
                 obj_rate_aggregate.summatory += rate
-                obj_rate_aggregate.avg += obj_rate_aggregate.rate / obj_rate_aggregate.count
+                obj_rate_aggregate.avg = obj_rate_aggregate.summatory / obj_rate_aggregate.count
                 obj_rate_aggregate.save()
                 obj_rate.krate = rate
                 obj_rate.save()
                 if isinstance(obj, KRateableMixin):
                     obj.krate = obj_rate_aggregate.avg
                     obj.save()
+                return ('modified', obj_rate_aggregate.avg)
 
-    def get_object_rate(self, request, obj, **kwargs):
+    def get_object_rate(self, obj, **kwargs):
         if isinstance(obj, KRateableMixin):
             return obj.krate
         else:
@@ -55,12 +58,9 @@ class DBRateHandler(RateHandlerBase):
         return self.get_user_object_rate(request.user, obj, **kwargs)
 
     def get_user_object_rate(self, user, obj, **kwargs):
-        if isinstance(obj, KRateableMixin):
-            return obj.krate
-        else:
-            try:
-                obj_content_type = ContentType.objects.get_for_model(obj)
-                obj_rate = ObjRate.objects.get(content_type=obj_content_type, object_id=obj.pk, user=request.user)
-                return obj_rate.krate
-            except ObjVisit.DoesNotExist:
-                return None
+        try:
+            obj_content_type = ContentType.objects.get_for_model(obj)
+            obj_rate = ObjRate.objects.get(content_type=obj_content_type, object_id=obj.pk, user=user)
+            return obj_rate.krate
+        except ObjRate.DoesNotExist:
+            return None

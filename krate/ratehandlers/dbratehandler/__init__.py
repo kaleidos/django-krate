@@ -5,6 +5,10 @@ from .models import *
 class DBRateHandler(RateHandlerBase):
     def rate_object(self, request, obj, rate, **kwargs):
         with transaction.commit_on_success():
+            try:
+                rate = float(rate)
+            except ValueError:
+                return ('invalid-rate-format', rate)
             obj_content_type = ContentType.objects.get_for_model(obj)
             (obj_rate, created) = ObjRate.objects.get_or_create(content_type=obj_content_type, object_id=obj.pk, user=request.user)
             (obj_rate_aggregate, created_agg) = ObjRateAggregate.objects.get_or_create(content_type=obj_content_type, object_id=obj.pk)

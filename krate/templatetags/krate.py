@@ -56,7 +56,7 @@ class MyKRateNode(template.Node):
             raise template.TemplateSyntaxError("mykrate second argument must be an resquest or user")
 
         if value == None:
-            return self.kwargs.get('default', None)
+            return self.kwargs.get('default', '')
         else:
             return value
 
@@ -73,7 +73,7 @@ def do_mykrate(parser, token):
     kwargs = {}
     for pair in tail:
         splited_pair = pair.split("=")
-        if len(splited_pair) != 2:
+        if len(splited_pair) != 2 or len(splited_pair[0]) == 0:
             raise template.TemplateSyntaxError("mykrate tag kwargs must be key=value format")
         kwargs[splited_pair[0]] = splited_pair[1]
 

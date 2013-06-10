@@ -77,11 +77,9 @@ class KRateTemplateTagsTest(unittest.TestCase):
         template1 = Template('{% load krate %}{% mykrate obj request_or_user %}')
         template2 = Template('{% load krate %}{% mykrate obj request_or_user default=No%}')
 
-        with self.assertRaises(TemplateSyntaxError):
-            Template('{% load krate %}{% mykrate obj request_or_user =%}')
+        self.assertRaises(TemplateSyntaxError, lambda: Template('{% load krate %}{% mykrate obj request_or_user =%}'))
 
-        with self.assertRaises(TemplateSyntaxError):
-            Template('{% load krate %}{% mykrate obj request_or_user parameter %}')
+        self.assertRaises(TemplateSyntaxError, lambda: Template('{% load krate %}{% mykrate obj request_or_user parameter %}'))
 
         rendered = template1.render(Context({'obj': self.test1, 'request_or_user': self.request1}))
         self.assertEqual(rendered, "10.0")
@@ -101,5 +99,4 @@ class KRateTemplateTagsTest(unittest.TestCase):
         rendered = template2.render(Context({'obj': self.test2, 'request_or_user': self.request2}))
         self.assertEqual(rendered, "No")
 
-        with self.assertRaises(TemplateSyntaxError):
-            rendered = template1.render(Context({'obj': self.request1, 'request_or_user': self.test1}))
+        self.assertRaises(TemplateSyntaxError, lambda: template1.render(Context({'obj': self.request1, 'request_or_user': self.test1})))

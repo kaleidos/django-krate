@@ -1,12 +1,14 @@
 import unittest
+
 from django.http import HttpRequest
-from django.test.utils import override_settings
-from krate.ratehandlers.noratehandler import NoRateHandler
+from django.contrib.auth.models import User
+from django.template import Template, Context, TemplateSyntaxError
+
 from krate.ratehandlers.dbratehandler import DBRateHandler
 from krate.ratehandlers.dbratehandler.models import *
-from django.contrib.auth.models import User
-from .models import TestModel, TestModel2
-from django.template import Template, Context, TemplateSyntaxError
+
+from testing.models import TestModel
+
 
 class KRateTemplateTagsTest(unittest.TestCase):
     def setUp(self):
@@ -62,15 +64,14 @@ class KRateTemplateTagsTest(unittest.TestCase):
         template1 = Template('{% load krate %}{% krate obj %}')
         template2 = Template('{% load krate %}{% krate obj default=No%}')
 
-        rendered = template1.render(Context({ 'obj': self.test1 }))
+        rendered = template1.render(Context({'obj': self.test1}))
         self.assertEqual(rendered, "8.5")
-        rendered = template1.render(Context({ 'obj': self.test2 }))
+        rendered = template1.render(Context({'obj': self.test2}))
         self.assertEqual(rendered, "")
-        rendered = template2.render(Context({ 'obj': self.test1 }))
+        rendered = template2.render(Context({'obj': self.test1}))
         self.assertEqual(rendered, "8.5")
-        rendered = template2.render(Context({ 'obj': self.test2 }))
+        rendered = template2.render(Context({'obj': self.test2}))
         self.assertEqual(rendered, "No")
-
 
     def test_mykrate_tag(self):
         template1 = Template('{% load krate %}{% mykrate obj request_or_user %}')
@@ -82,23 +83,23 @@ class KRateTemplateTagsTest(unittest.TestCase):
         with self.assertRaises(TemplateSyntaxError):
             Template('{% load krate %}{% mykrate obj request_or_user parameter %}')
 
-        rendered = template1.render(Context({ 'obj': self.test1, 'request_or_user': self.request1 }))
+        rendered = template1.render(Context({'obj': self.test1, 'request_or_user': self.request1}))
         self.assertEqual(rendered, "10.0")
-        rendered = template1.render(Context({ 'obj': self.test1, 'request_or_user': self.request2 }))
+        rendered = template1.render(Context({'obj': self.test1, 'request_or_user': self.request2}))
         self.assertEqual(rendered, "7.0")
-        rendered = template1.render(Context({ 'obj': self.test2, 'request_or_user': self.request1 }))
+        rendered = template1.render(Context({'obj': self.test2, 'request_or_user': self.request1}))
         self.assertEqual(rendered, "")
-        rendered = template1.render(Context({ 'obj': self.test2, 'request_or_user': self.request2 }))
+        rendered = template1.render(Context({'obj': self.test2, 'request_or_user': self.request2}))
         self.assertEqual(rendered, "")
 
-        rendered = template2.render(Context({ 'obj': self.test1, 'request_or_user': self.request1 }))
+        rendered = template2.render(Context({'obj': self.test1, 'request_or_user': self.request1}))
         self.assertEqual(rendered, "10.0")
-        rendered = template2.render(Context({ 'obj': self.test1, 'request_or_user': self.request2 }))
+        rendered = template2.render(Context({'obj': self.test1, 'request_or_user': self.request2}))
         self.assertEqual(rendered, "7.0")
-        rendered = template2.render(Context({ 'obj': self.test2, 'request_or_user': self.request1 }))
+        rendered = template2.render(Context({'obj': self.test2, 'request_or_user': self.request1}))
         self.assertEqual(rendered, "No")
-        rendered = template2.render(Context({ 'obj': self.test2, 'request_or_user': self.request2 }))
+        rendered = template2.render(Context({'obj': self.test2, 'request_or_user': self.request2}))
         self.assertEqual(rendered, "No")
 
         with self.assertRaises(TemplateSyntaxError):
-            rendered = template1.render(Context({ 'obj': self.request1, 'request_or_user': self.test1 }))
+            rendered = template1.render(Context({'obj': self.request1, 'request_or_user': self.test1}))

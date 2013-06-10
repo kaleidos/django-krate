@@ -1,11 +1,14 @@
 import unittest
+
 from django.http import HttpRequest
-from django.test.utils import override_settings
+from django.contrib.auth.models import User
+
 from krate.ratehandlers.noratehandler import NoRateHandler
 from krate.ratehandlers.dbratehandler import DBRateHandler
 from krate.ratehandlers.dbratehandler.models import *
-from django.contrib.auth.models import User
-from .models import TestModel, TestModel2
+
+from testing.models import TestModel
+
 
 class NoRateHandlerTest(unittest.TestCase):
     def setUp(self):
@@ -43,6 +46,7 @@ class NoRateHandlerTest(unittest.TestCase):
 
     def test_get_user_object_rate(self):
         self.assertEqual(self.handler.get_user_object_rate(self.request.user, self.test1), 0)
+
 
 class DBRateHandlerTest(unittest.TestCase):
     def setUp(self):

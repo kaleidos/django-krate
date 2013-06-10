@@ -1,6 +1,19 @@
 Django Kaleidos Rate
 ====================
 
+.. image:: https://travis-ci.org/kaleidos/django-krate.png?branch=master
+    :target: https://travis-ci.org/kaleidos/django-krate
+
+.. image:: https://coveralls.io/repos/kaleidos/django-krate/badge.png?branch=master
+    :target: https://coveralls.io/r/kaleidos/django-krate?branch=master
+
+.. image:: https://pypip.in/v/django-krate/badge.png
+    :target: https://crate.io/packages/django-krate
+
+.. image:: https://pypip.in/d/django-krate/badge.png
+    :target: https://crate.io/packages/django-krate
+
+
 Django Kaleidos Rate is a django application for rate objects.
 
 Configuration
